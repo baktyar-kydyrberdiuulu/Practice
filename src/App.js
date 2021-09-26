@@ -30,17 +30,15 @@ function App() {
 
   return (
     <div>
-      {/* reusable stuff */}
-      <ExpenseItem
-        title={expenses[0].title}
-        amount={expenses[0].amount}
-        date={expenses[0].date}
-      />
-      <ExpenseItem
-        title={expenses[1].title}
-        amount={expenses[1].amount}
-        date={expenses[1].date}
-      />
+        {
+          expenses.map((element, index) => {
+            return <ExpenseItem 
+            title={element.title}
+            amount={element.amount}
+            date={element.date}
+             />
+          })
+        }
     </div>
   );
 }
