@@ -1,42 +1,31 @@
-import ExpenseList from "./components/Expenses/Expenses";
-import NewExpense from "./components/NewExpense/NewExpense";
-
+import React,{useState} from "react";
+import './App.css'
 function App() {
-  const expenses = [
-    {
-      id: 'e1',
-      title: 'Toilet Paper',
-      amount: 94.12,
-      date: new Date(2020, 7, 14),
-    },
-    {
-      id: 'e2',
-      title: 'New TV',
-      amount: 799.49,
-      date: new Date(2021, 2, 12)
-    },
-    {
-      id: 'e3',
-      title: 'Car Insurance',
-      amount: 294.67,
-      date: new Date(2021, 2, 28),
-    },
-    {
-      id: 'e4',
-      title: 'New Desk (Wooden)',
-      amount: 450,
-      date: new Date(2021, 5, 12),
-    },
-  ];
-
-  const addExpenseHandler = (expense) => {
-    console.log(expense);
+  const [value, setValue] = useState("")
+  const [name,setName] = useState("Nurik")
+  
+  const handleInput = (e) => {
+      setValue(e.target.value)
   }
-
+  const updateName = (e) => {
+    e.preventDefault()
+    setName(value)
+    setValue("")
+  }
   return (
-    <div>
-      <NewExpense onAddExpense={addExpenseHandler}/>
-      <ExpenseList expenses={expenses} />
+    <div className="box">
+      <h1>Hello <span>{name}</span>!</h1>
+      <form>
+        <div>
+          <label for="name-1">Update Name</label>
+          <div>
+            <input type="text" value={value} onChange={handleInput} name='name-1'/>
+          </div>
+        </div>
+        <div>
+          <button className="btn" onClick = {updateName}>Save</button>
+        </div>
+      </form>
     </div>
   );
 }
