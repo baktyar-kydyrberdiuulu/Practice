@@ -1,31 +1,101 @@
-import React,{useState} from "react";
-import './App.css'
+import React, { useState, useEffect } from "react";
+import fire from "./fire";
+import Login from "./Login";
+import Hero from "./Hero";
+import "./App.css";
 function App() {
-  const [value, setValue] = useState("")
-  const [name,setName] = useState("Nurik")
-  
-  const handleInput = (e) => {
-      setValue(e.target.value)
-  }
-  const updateName = (e) => {
-    e.preventDefault()
-    setName(value)
-    setValue("")
-  }
+  const [user, setUser] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [hasAccount, setHasAccount] = useState(false);
+
+const clearInput = () =>{
+  setEmail("")
+  setPassword("")
+}
+const clearErrors = () => {
+  setEmailError("")
+  setPasswordError("")
+}
+
+ const handleLogin = () => {
+   clearErrors()
+   fire
+   .auth()
+   .signInWithEmailAndPassword(email,password)
+   .catch((err) =>{
+     switch (err.code){
+       case "auth/invalid-email":
+       case "auth/user-disabled":
+       case "auth/user-not-found":
+        setEmailError(err.message)
+        break;
+      case "auth/wrong-password":
+        setPasswordError(err.message)
+     }
+   })
+
+ }
+
+ const handleSignUp = () => {
+   clearErrors()
+  fire
+  .auth()
+  .createUserWithEmailAndPassword(email,password)
+  .catch((err) =>{
+    switch (err.code){
+      case "auth/email-already-in-use":
+      case "auth/invalid-email":
+       setEmailError(err.message)
+       break;
+     case "auth/weak-password":
+       setPasswordError(err.message)
+    }
+  })
+ }
+
+ const handleLogout = () => {
+   fire.auth().signOut()
+ }
+ const authListener = () => {
+   fire
+   .auth()
+   .onAuthStateChanged((user) => {
+     clearInput()
+     if(user){
+       setUser(user)
+     }else{
+       setUser("")
+     }
+   })
+ }
+//  useEffect(()=>{
+//    authListener();
+//  })
   return (
     <div className="box">
-      <h1>Hello <span>{name}</span>!</h1>
-      <form>
-        <div>
-          <label for="name-1">Update Name</label>
-          <div>
-            <input type="text" value={value} onChange={handleInput} name='name-1'/>
-          </div>
-        </div>
-        <div>
-          <button className="btn" onClick = {updateName}>Save</button>
-        </div>
-      </form>
+      {user ?(
+      <Hero handleLogout = {handleLogout}/>
+
+      ):(
+        <Login
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        handleLogin = {handleLogin}
+        handleSignUp = {handleSignUp}
+        hasAccount = {hasAccount}
+        setHasAccount = {setHasAccount}
+        emailError = {emailError}
+        passwordError = {passwordError}
+ 
+         
+       />
+      )}
+     
     </div>
   );
 }
